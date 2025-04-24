@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: fatuma-bot
+    env: node
+    plan: free
+    build:
+      command: npm install
+    start:
+      command: node index.js
+    wait_for_port: 8080

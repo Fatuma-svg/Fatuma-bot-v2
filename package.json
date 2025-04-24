@@ -1,0 +1,17 @@
+{
+  "name": "fatuma-bot",
+  "version": "1.0.0",
+  "description": "A WhatsApp bot using baileys library",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.4.0",
+    "fs": "^0.0.1",
+    "boom": "^7.0.0"
+  },
+  "devDependencies": {},
+  "author": "Fatuma-svg",
+  "license": "ISC"
+}
