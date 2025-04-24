@@ -1,49 +1,45 @@
 {
   "name": "fatuma-bot",
-  "description": "Fatuma WhatsApp Bot with 600+ commands using Baileys and 24/7 online presence",
+  "description": "WhatsApp bot using Baileys with 600+ commands and plugin support",
   "repository": "https://github.com/Fatuma-svg/fatuma-bot-v2.git",
-  "keywords": ["node", "whatsapp", "baileys", "bot", "fatuma", "AI", "tools", "admin", "image-gen", "audio", "fun"],
+  "keywords": ["node", "whatsapp", "baileys", "bot", "fatuma", "multi-auth", "plugin"],
   "env": {
     "WHATSAPP_OWNER": {
-      "description": "Owner's WhatsApp number in international format",
+      "description": "Namba ya mmiliki wa bot",
       "value": "255760317060"
     },
-    "AUTO_TYPING": { "description": "Auto typing in groups", "value": "on" },
-    "AUTO_RECORD": { "description": "Auto fake recording", "value": "on" },
-    "AUTO_REACT": { "description": "Auto react to messages", "value": "off" },
-    "AUTO_BIO": { "description": "Auto bio update", "value": "off" },
-    "ANTI_BAD": { "description": "Filter bad words", "value": "off" },
-    "ANTI_LINK": { "description": "Block group links", "value": "off" },
-    "AI_CHAT": { "description": "AI Chatbot enabled", "value": "on" },
-    "IMAGE_GEN": { "description": "Enable AI image generation", "value": "on" },
-    "MUSIC_FEATURE": { "description": "Enable music download", "value": "on" },
-    "PDF_CONVERTER": { "description": "Enable PDF features", "value": "on" },
-    "STICKER_FEATURE": { "description": "Enable sticker maker", "value": "on" },
-    "SIMI_FEATURE": { "description": "Enable Simi AI", "value": "on" },
-    "VOICE_COMMANDS": { "description": "Enable voice replies", "value": "on" },
-    "OWNER_ONLY_COMMANDS": { "description": "Restrict commands to owner only", "value": "on" },
-    "PREFIX": { "description": "Command prefix", "value": "!" },
-    "OPEN_VIEW_ONCE": { "description": "Allow opening view-once messages", "value": "on" },
-    "PRESENCE": { "description": "Bot presence status: available | composing | recording", "value": "available" },
-    "ONLINE_MODE": { "description": "Keep bot online 24/7", "value": "on" },
+    "PREFIX": {
+      "description": "Command prefix",
+      "value": "!"
+    },
+    "AUTO_TYPING": {
+      "description": "Auto typing (on/off)",
+      "value": "on"
+    },
+    "AUTO_RECORD": {
+      "description": "Auto recording (on/off)",
+      "value": "on"
+    },
+    "OPEN_VIEW_ONCE": {
+      "description": "Open view once messages (on/off)",
+      "value": "on"
+    },
+    "ONLINE_MODE": {
+      "description": "Stay online (on/off)",
+      "value": "on"
+    },
     "SESSION_FOLDER": {
-      "description": "Folder name for multi-file auth session",
+      "description": "Folder ya sessions (auth)",
       "value": "auth_info_multi"
     }
   },
-  "buildpacks": [
-    {
-      "url": "heroku/nodejs"
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
     }
-  ],
+  },
   "scripts": {
     "start": "node index.js"
   },
-  "formation": {
-    "web": {
-      "quantity": 1,
-      "size": "free"
-    }
-  },
-  "stack": "container"
+  "image": "heroku/nodejs"
 }
