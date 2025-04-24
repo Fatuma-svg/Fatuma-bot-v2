@@ -1,0 +1,28 @@
+# .gitignore
+
+# Node modules
+node_modules/
+
+# Auth sessions
+auth_info_multi/
+auth_info/
+
+# Baileys temp & cache
+temp/
+session/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# ZIP files
+*.zip
+
+# Backup files
+*.bak
+
+# OS specific
+.DS_Store
+Thumbs.db
