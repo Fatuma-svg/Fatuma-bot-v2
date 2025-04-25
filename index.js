@@ -1,5 +1,21 @@
 
-// Fatuma Bot - index.js with 600+ commands and plugin support import 'dotenv/config'; import fs from 'fs'; import path from 'path'; import { fileURLToPath } from 'url'; import { Boom } from '@hapi/boom'; import makeWASocket, { DisconnectReason, useMultiFileAuthState, fetchLatestBaileysVersion, makeInMemoryStore, jidNormalizedUser } from '@whiskeysockets/baileys'; import Pino from 'pino'; import qrcode from 'qrcode-terminal';
+import pkg from '@whiskeysockets/baileys'
+const {
+  makeWASocket,
+  DisconnectReason,
+  useMultiFileAuthState,
+  fetchLatestBaileysVersion,
+  makeInMemoryStore,
+  jidNormalizedUser
+} = pkg
+
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+import path from 'path'
+import Pino from 'pino'
+import qrcode from 'qrcode-terminal'
+import 'dotenv/config'
+import { Boom } from '@hapi/boom'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url)); const sessionFolder = process.env.SESSION_FOLDER || 'auth_info_multi'; const store = makeInMemoryStore({ logger: Pino().child({ level: 'silent', stream: 'store' }) });
 

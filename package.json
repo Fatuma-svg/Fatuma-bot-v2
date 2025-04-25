@@ -1,8 +1,10 @@
+
 {
   "name": "fatuma-bot",
   "version": "1.0.0",
   "description": "Fatuma WhatsApp Bot with 600+ commands",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
