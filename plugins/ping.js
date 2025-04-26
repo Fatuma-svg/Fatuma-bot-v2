@@ -1,6 +1,8 @@
 
-export default async (sock, msg, body, from, prefix) => {
-  if (body.startsWith(prefix + 'ping')) {
-    await sock.sendMessage(from, { text: 'Pong! 🥊' }, { quoted: msg });
-  }
-};
+export default {
+    name: 'ping',
+    description: 'Check bot status',
+    execute: async (sock, m) => {
+        await sock.sendMessage(m.chat, { text: 'Pong! 🥊' }, { quoted: m });
+    }
+}
