@@ -1,4 +1,4 @@
-import googleTTS from 'google-tts-api'
+import googleTTS from 'google-tts-api';
 
 export default async function (sock, msg, body, from, prefix) {
   if (!body.startsWith(prefix + 'say')) return;

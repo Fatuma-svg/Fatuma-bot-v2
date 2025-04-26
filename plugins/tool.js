@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { exec } from 'child_process';
 import moment from 'moment';
-import { getWeather } from 'weather-js';
+import weather from 'weather-js';
 import dns from 'dns';
 
 export default async function(sock, msg, body, from, prefix) {
@@ -64,16 +64,15 @@ export default async function(sock, msg, body, from, prefix) {
   }
   
   // Weather
-  if (command === 'weather') {
+if (command === 'weather') {
     if (!args[0]) return reply('🌤️ Tafadhali tuma jina la jiji, mfano:\n!weather Dar es Salaam');
     let city = args.join(' ');
-    getWeather({ search: city, degreeType: 'C' }, function(err, result) {
-      if (err) return reply('❌ Hakuna taarifa za hali ya hewa kwa jiji hili.');
-      let weatherInfo = result[0].current;
-      await reply(`🌤️ Hali ya hewa kwa ${city}:\n*${weatherInfo.temperature}°C*\n*${weatherInfo.skytext}*\n*Wind: ${weatherInfo.windspeed}*`);
+    getWeather({ search: city, degreeType: 'C' }, async function(err, result) {
+        if (err) return reply('❌ Hakuna taarifa za hali ya hewa kwa jiji hili.');
+        let weatherInfo = result[0].current;
+        await reply(`🌤️ Hali ya hewa kwa ${city}:\n*${weatherInfo.temperature}°C*\n*${weatherInfo.skytext}*\n*Wind: ${weatherInfo.windspeed}*`);
     });
-  }
-
+}
   // Time
   if (command === 'time') {
     let time = moment().format('YYYY-MM-DD HH:mm:ss');
