@@ -1,17 +1,50 @@
-export default async function (sock, msg, body, from, prefix) {
-  const send = (text) => sock.sendMessage(from, { text }, { quoted: msg });
+export default {
+    name: 'ai',
+    description: 'Various AI-based commands',
+    execute: async (sock, m, { body, from, prefix }) => {
+        try {
+            const send = (text) => sock.sendMessage(from, { text }, { quoted: m });
 
-  if (!body.startsWith(prefix)) return;
-  const cmd = body.slice(prefix.length).trim().toLowerCase();
+            if (!body.startsWith(prefix)) return;
+            const cmd = body.slice(prefix.length).trim().toLowerCase();
 
-  if (cmd === 'ai') send('🤖 This is AI responding!');
-  else if (cmd === 'ask') send('💬 Ask me anything!');
-  else if (cmd === 'imagegen') send('🖼️ Generating an image...');
-  else if (cmd === 'chat') send('🗨️ Let\'s chat!');
-  else if (cmd === 'translate') send('🌍 Translating...');
-  else if (cmd === 'summarize') send('✍️ Summarizing text...');
-  else if (cmd === 'wiki') send('📚 Searching Wikipedia...');
-  else if (cmd === 'news') send('📰 Fetching the latest news...');
-  else if (cmd === 'quoteai') send('💡 AI-generated quote!');
-  else if (cmd === 'aijoke') send('😂 Here\'s an AI joke!');
-}
+            switch (cmd) {
+                case 'ai':
+                    send('🤖 This is AI responding!');
+                    break;
+                case 'ask':
+                    send('💬 Ask me anything!');
+                    break;
+                case 'imagegen':
+                    send('🖼️ Generating an image...');
+                    break;
+                case 'chat':
+                    send('🗨️ Let\'s chat!');
+                    break;
+                case 'translate':
+                    send('🌍 Translating...');
+                    break;
+                case 'summarize':
+                    send('✍️ Summarizing text...');
+                    break;
+                case 'wiki':
+                    send('📚 Searching Wikipedia...');
+                    break;
+                case 'news':
+                    send('📰 Fetching the latest news...');
+                    break;
+                case 'quoteai':
+                    send('💡 AI-generated quote!');
+                    break;
+                case 'aijoke':
+                    send('😂 Here\'s an AI joke!');
+                    break;
+                default:
+                    // hakuna action
+                    break;
+            }
+        } catch (err) {
+            console.error('Error executing AI command:', err);
+        }
+    }
+};
