@@ -1,68 +1,27 @@
-import { makeWASocket, DisconnectReason, useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
-import Pino from 'pino';
+import { makeWASocket, useMultiFileAuthState } from '@whiskeysockets/baileys';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { Boom } from '@hapi/boom';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Owner Number
-const ownerNumber = ['255760317060@s.whatsapp.net'];
 
 // Setup auth
 const { state, saveCreds } = await useMultiFileAuthState('./session');
-
-// Setup logger
-const logger = Pino({ level: 'silent' });
-
-// Fetch latest Baileys version
-const { version } = await fetchLatestBaileysVersion();
-
-// Create socket
 const conn = makeWASocket({
-    version,
-    logger,
-    printQRInTerminal: true,
     auth: state,
-    defaultQueryTimeoutMs: undefined,
+    printQRInTerminal: true,
     browser: ['Ben Whittaker Tech', 'Safari', '1.0.0'],
 });
 
-// Auto-reconnect
-conn.ev.on('connection.update', async (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === 'close') {
-        const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-        console.log('connection closed, reconnecting...', shouldReconnect);
-        if (shouldReconnect) {
-            process.exit(0);
-        }
-    } else if (connection === 'open') {
-        console.log('✅ Ben Whittaker Tech Connected!');
-    }
-});
+const prefix = '!';
+const ownerNumber = ['255760317060@s.whatsapp.net'];
 
 // Save creds
 conn.ev.on('creds.update', saveCreds);
 
-// Auto Typing / Recording / Online Presence
-conn.ev.on('messages.upsert', async (chatUpdate) => {
-    const m = chatUpdate.messages[0];
-    if (!m.message) return;
-    if (m.key && m.key.remoteJid === 'status@broadcast') return;
-    if (m.key.fromMe) return;
-
-    await conn.sendPresenceUpdate('composing', m.key.remoteJid);
-    await conn.sendPresenceUpdate('recording', m.key.remoteJid);
-    await conn.sendPresenceUpdate('available', m.key.remoteJid);
-});
-
-// Plugins loading
+// Plugins directory
 const pluginsDir = path.join(__dirname, 'plugins');
 let plugins = [];
 
+// Function to load plugins
 async function loadPlugins() {
     plugins = [];
     if (!fs.existsSync(pluginsDir)) {
@@ -80,19 +39,17 @@ async function loadPlugins() {
         }
     }
 }
+
 await loadPlugins();
 
-// Message event
+// Command event
 conn.ev.on('messages.upsert', async (chatUpdate) => {
     try {
         const m = chatUpdate.messages[0];
         if (!m.message) return;
-        if (m.key && m.key.remoteJid === 'status@broadcast') return;
+        if (m.key.fromMe) return;
 
-        const messageType = Object.keys(m.message)[0];
         const text = (m.message.conversation || m.message.extendedTextMessage?.text || '').trim();
-
-        const prefix = '!';
         if (!text.startsWith(prefix)) return;
 
         const commandBody = text.slice(prefix.length).trim().split(' ')[0].toLowerCase();
@@ -101,12 +58,36 @@ conn.ev.on('messages.upsert', async (chatUpdate) => {
 
         console.log(`📩 Received command: ${commandBody} from ${sender}`);
 
+        // Check if the command matches a plugin
         for (const plugin of plugins) {
             if (plugin.command === commandBody) {
                 await plugin.run(conn, m, args, { ownerNumber });
                 break;
             }
         }
+
+        // If no plugin matched, fallback to default handling (like !set and !envlist)
+        if (commandBody === 'set' && args.length === 2) {
+            const feature = args[0].toUpperCase();
+            const status = args[1].toLowerCase();
+            if (status === 'on' || status === 'off') {
+                const envPath = path.join(__dirname, '.env');
+                const envFile = fs.readFileSync(envPath, 'utf8');
+                const updatedEnv = envFile.replace(new RegExp(`${feature}=.*`), `${feature}=${status}`);
+                fs.writeFileSync(envPath, updatedEnv);
+                await conn.sendMessage(sender, `✅ ${feature} imewekwa ${status === 'on' ? 'ON' : 'OFF'}`, { quoted: m });
+            } else {
+                await conn.sendMessage(sender, '❌ Tafadhali tumia `on` au `off` kwa feature.', { quoted: m });
+            }
+        }
+
+        // !envlist command (display all .env features)
+        if (commandBody === 'envlist') {
+            const envPath = path.join(__dirname, '.env');
+            const envFile = fs.readFileSync(envPath, 'utf8');
+            await conn.sendMessage(sender, '```\n' + envFile + '\n```', { quoted: m });
+        }
+
     } catch (e) {
         console.error('❌ Error in message event:', e);
     }
